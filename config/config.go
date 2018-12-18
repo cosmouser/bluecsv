@@ -3,26 +3,37 @@ package config
 import (
 	"encoding/json"
 	"flag"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"strconv"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
+// Config holds the data from the json config file
 type Config struct {
 	AdminEmail  string
-	ExternalUrl string
+	ExternalURL string
 	PathPrefix  string
-	LdapUrl     string
+	LdapURL     string
 	LdapBase    string
 	LoginKeys   []string
 }
 
+// C is the exported config struct in other packages
 var C Config
+
+// ConfigPath is the path to the config json
 var ConfigPath = flag.String("config", "./config.json", "path to config.json")
+
+// TmplPath is the path to the template files
 var TmplPath = flag.String("tmpl", "./templates/", "path to template files")
 var port = flag.Int("port", 8100, "port to listen on")
+
+// Port is the port that the server listens on, set via flag
 var Port string
+
+// Credentials is the map of access keys and user ids
 var Credentials map[string]string
 
 func init() {

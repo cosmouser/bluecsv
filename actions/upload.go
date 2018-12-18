@@ -12,29 +12,30 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// UploadHandler receives the uploaded CSV and returns the output CSV
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := session(w, r)
 	defer r.Body.Close()
 	if r.Method == "GET" {
-		http.Redirect(w, r, config.C.ExternalUrl+"/", 302)
+		http.Redirect(w, r, config.C.ExternalURL+"/", 302)
 	}
 	if err != nil || r.Method != "POST" {
 		info := &templateInfo{
 			LoggedIn:    userID,
-			ExternalUrl: config.C.ExternalUrl,
+			ExternalURL: config.C.ExternalURL,
 			Error:       errors.New("Invalid Operation"),
 		}
-		ErrorTmpl.Execute(w, info)
+		errorTmpl.Execute(w, info)
 		return
 	}
 	formReader, err := r.MultipartReader()
 	if err != nil {
 		info := &templateInfo{
 			LoggedIn:    userID,
-			ExternalUrl: config.C.ExternalUrl,
+			ExternalURL: config.C.ExternalURL,
 			Error:       err,
 		}
-		ErrorTmpl.Execute(w, info)
+		errorTmpl.Execute(w, info)
 		return
 	}
 	// Read values of col1 -- col6
@@ -46,10 +47,10 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			info := &templateInfo{
 				LoggedIn:    userID,
-				ExternalUrl: config.C.ExternalUrl,
+				ExternalURL: config.C.ExternalURL,
 				Error:       err,
 			}
-			ErrorTmpl.Execute(w, info)
+			errorTmpl.Execute(w, info)
 			return
 		}
 		n, err := part.Read(columnBuffer)
@@ -57,10 +58,10 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 			if err != io.EOF {
 				info := &templateInfo{
 					LoggedIn:    userID,
-					ExternalUrl: config.C.ExternalUrl,
+					ExternalURL: config.C.ExternalURL,
 					Error:       err,
 				}
-				ErrorTmpl.Execute(w, info)
+				errorTmpl.Execute(w, info)
 				return
 			}
 		}
@@ -74,43 +75,44 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		info := &templateInfo{
 			LoggedIn:    userID,
-			ExternalUrl: config.C.ExternalUrl,
+			ExternalURL: config.C.ExternalURL,
 			Error:       err,
 		}
-		ErrorTmpl.Execute(w, info)
+		errorTmpl.Execute(w, info)
 		return
 	}
-	if filename := part.FileName(); len(filename) < 4 {
+	filename := part.FileName()
+	if len(filename) < 4 {
 		log.WithFields(log.Fields{
 			"filename": filename,
-		}).Error("Invalid File Format")
+		}).Error("invalid file format")
 		info := &templateInfo{
 			LoggedIn:    userID,
-			ExternalUrl: config.C.ExternalUrl,
-			Error:       errors.New("Please upload a CSV file with org emails in the first column"),
+			ExternalURL: config.C.ExternalURL,
+			Error:       errors.New("please upload a CSV file with org emails in the first column"),
 		}
-		ErrorTmpl.Execute(w, info)
+		errorTmpl.Execute(w, info)
 		return
 	}
-	if filename := part.FileName(); filename[len(filename)-3:] != "csv" {
+	if filename[len(filename)-3:] != "csv" {
 		log.WithFields(log.Fields{
 			"filename": filename,
 			"fileExt":  filename[len(filename)-3:],
-		}).Error("Invalid File Format")
+		}).Error("invalid file format")
 		info := &templateInfo{
 			LoggedIn:    userID,
-			ExternalUrl: config.C.ExternalUrl,
-			Error:       errors.New("Invalid file format. Please make sure to export your data in csv format before uploading."),
+			ExternalURL: config.C.ExternalURL,
+			Error:       errors.New("invalid file format. please make sure to export your data in csv format before uploading"),
 		}
-		ErrorTmpl.Execute(w, info)
+		errorTmpl.Execute(w, info)
 		return
-	} else {
-		w.Header().Set("Content-Disposition", fmt.Sprintf(
-			"attachment; filename=%v_out.csv",
-			filename[:len(filename)-4],
-		))
-		w.Header().Set("Content-Type", "text/csv")
 	}
+	w.Header().Set("Content-Disposition", fmt.Sprintf(
+		"attachment; filename=%v_out.csv",
+		filename[:len(filename)-4],
+	))
+	w.Header().Set("Content-Type", "text/csv")
+
 	log.WithFields(log.Fields{
 		"userID":     userID,
 		"attributes": attributes,
@@ -122,10 +124,10 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
 		info := &templateInfo{
 			LoggedIn:    userID,
-			ExternalUrl: config.C.ExternalUrl,
-			Error:       errors.New("Header row has too few columns. Please see FAQ for details."),
+			ExternalURL: config.C.ExternalURL,
+			Error:       errors.New("header row has too few columns. please see FAQ for details"),
 		}
-		ErrorTmpl.Execute(w, info)
+		errorTmpl.Execute(w, info)
 		return
 	}
 	log.WithFields(log.Fields{
@@ -145,10 +147,10 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set("Content-Type", "text/html")
 				info := &templateInfo{
 					LoggedIn:    userID,
-					ExternalUrl: config.C.ExternalUrl,
+					ExternalURL: config.C.ExternalURL,
 					Error:       err,
 				}
-				ErrorTmpl.Execute(w, info)
+				errorTmpl.Execute(w, info)
 				return
 			}
 			emptyLines = 0

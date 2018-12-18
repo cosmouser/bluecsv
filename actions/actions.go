@@ -13,15 +13,17 @@ import (
 
 type templateInfo struct {
 	LoggedIn    string
-	ExternalUrl string
+	ExternalURL string
 	AdminEmail  string
 	Error       error
 }
-type SessionStore struct {
+
+type sessionStore struct {
 	sync.RWMutex
 	cache map[string]string
 }
 
+// FaqHandler provides the FAQ page
 func FaqHandler(w http.ResponseWriter, r *http.Request) {
 	userID, _ := session(w, r)
 	templateFile := *config.TmplPath + "faq.tmpl"
@@ -33,12 +35,14 @@ func FaqHandler(w http.ResponseWriter, r *http.Request) {
 
 	info := &templateInfo{
 		LoggedIn:    userID,
-		ExternalUrl: config.C.ExternalUrl,
+		ExternalURL: config.C.ExternalURL,
 		AdminEmail:  config.C.AdminEmail,
 	}
 	faqTmpl.Execute(w, info)
 	return
 }
+
+// HomeHandler provides the form or the login page depending on the session
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := session(w, r)
 	defer r.Body.Close()
@@ -57,46 +61,49 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}).Info()
 	info := &templateInfo{
 		LoggedIn:    userID,
-		ExternalUrl: config.C.ExternalUrl,
+		ExternalURL: config.C.ExternalURL,
 		AdminEmail:  config.C.AdminEmail,
 	}
 	homeTmpl.Execute(w, info)
 }
 
+// Authenticate handles logins to use the web app
 func Authenticate(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	defer r.Body.Close()
 	if userID, ok := config.Credentials[r.PostFormValue("key")]; ok {
-		uUid := Store.Put(userID)
+		uUID := store.put(userID)
 		cookie := &http.Cookie{
 			Name:     "_session",
-			Value:    uUid,
+			Value:    uUID,
 			HttpOnly: true,
 		}
 		http.SetCookie(w, cookie)
 		log.WithFields(log.Fields{
 			"key": r.PostFormValue("key"),
 		}).Info("Login Successful")
-		http.Redirect(w, r, config.C.ExternalUrl+"/", 302)
+		http.Redirect(w, r, config.C.ExternalURL+"/", 302)
 	} else {
 		log.WithFields(log.Fields{
 			"key": r.PostFormValue("key"),
 		}).Warn("Login Failed")
 		info := &templateInfo{
 			LoggedIn:    userID,
-			ExternalUrl: config.C.ExternalUrl,
+			ExternalURL: config.C.ExternalURL,
 			Error:       errors.New("Invalid Login"),
 		}
-		ErrorTmpl.Execute(w, info)
+		errorTmpl.Execute(w, info)
 		return
 	}
 }
+
+// Logout clears the session
 func Logout(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("_session")
 	if err == nil {
-		_, ok := Store.Check(cookie.Value)
+		_, ok := store.check(cookie.Value)
 		if !ok {
-			http.Redirect(w, r, config.C.ExternalUrl+"/", 302)
+			http.Redirect(w, r, config.C.ExternalURL+"/", 302)
 		}
 		wipedCookie := &http.Cookie{
 			Name:     "_session",
@@ -105,27 +112,28 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		}
 		http.SetCookie(w, wipedCookie)
 	}
-	http.Redirect(w, r, config.C.ExternalUrl+"/", 302)
+	http.Redirect(w, r, config.C.ExternalURL+"/", 302)
 }
-func (store *SessionStore) Check(uuid string) (userID string, ok bool) {
+
+func (store *sessionStore) check(uuid string) (userID string, ok bool) {
 	store.RLock()
 	userID, ok = store.cache[uuid]
 	store.RUnlock()
 	return userID, ok
 }
-func (store *SessionStore) Put(userID string) (uUid string) {
-	uUid = uuid.Must(uuid.NewV4()).String()
+func (store *sessionStore) put(userID string) (uUID string) {
+	uUID = uuid.Must(uuid.NewV4()).String()
 	store.Lock()
 	log.WithFields(log.Fields{
-		"uuid":   uUid,
+		"uuid":   uUID,
 		"userID": userID,
 	}).Info("New Session")
-	store.cache[uUid] = userID
+	store.cache[uUID] = userID
 	store.Unlock()
-	return uUid
+	return uUID
 }
-func NewStore() *SessionStore {
-	return &SessionStore{
+func newStore() *sessionStore {
+	return &sessionStore{
 		cache: make(map[string]string),
 	}
 }
@@ -133,7 +141,7 @@ func session(w http.ResponseWriter, r *http.Request) (string, error) {
 	cookie, err := r.Cookie("_session")
 	var userID string
 	if err == nil {
-		id, ok := Store.Check(cookie.Value)
+		id, ok := store.check(cookie.Value)
 		if !ok {
 			err = errors.New("Invalid Session")
 		}
@@ -142,14 +150,14 @@ func session(w http.ResponseWriter, r *http.Request) (string, error) {
 	return userID, err
 }
 
-var ErrorTmpl *template.Template
-var Store *SessionStore
+var errorTmpl *template.Template
+var store *sessionStore
 
 func init() {
 	var err error
-	ErrorTmpl, err = template.ParseFiles(*config.TmplPath + "error.tmpl")
+	errorTmpl, err = template.ParseFiles(*config.TmplPath + "error.tmpl")
 	if err != nil {
 		log.Fatal(err)
 	}
-	Store = NewStore()
+	store = newStore()
 }

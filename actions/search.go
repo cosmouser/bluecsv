@@ -9,15 +9,17 @@ import (
 	"gopkg.in/ldap.v2"
 )
 
+// GetLdapValues looks up the provided uid and retruns a slice for appending
+// in a CSV file
 func GetLdapValues(uid string, attributes []string) ([]string, error) {
 	uidSplit := strings.Split(uid, "@")
 	// config.C.LdapUrl looks like fqdn:portNo
-	l, err := ldap.Dial("tcp", config.C.LdapUrl)
+	l, err := ldap.Dial("tcp", config.C.LdapURL)
 	if err != nil {
 		log.WithFields(log.Fields{
 			"uid":        uidSplit[0],
 			"attrbiutes": attributes,
-			"LdapUrl":    config.C.LdapUrl,
+			"LdapUrl":    config.C.LdapURL,
 			"state":      "dialing",
 		}).Warn(err)
 	}
@@ -38,7 +40,7 @@ func GetLdapValues(uid string, attributes []string) ([]string, error) {
 		log.WithFields(log.Fields{
 			"uid":        uidSplit[0],
 			"attrbiutes": attributes,
-			"LdapUrl":    config.C.LdapUrl,
+			"LdapUrl":    config.C.LdapURL,
 			"state":      "searching",
 		}).Warn(err)
 	}
