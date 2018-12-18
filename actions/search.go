@@ -46,7 +46,7 @@ func GetLdapValues(uid string, attributes []string) ([]string, error) {
 	attrResults := make([]string, len(attributes))
 	for _, entry := range searchResults.Entries {
 		for i, j := range attributes {
-			attrResults[i] = entry.GetAttributeValue(j)
+			attrResults[i] = strings.Join(entry.GetAttributeValues(j), "|")
 		}
 	}
 	return attrResults, err
