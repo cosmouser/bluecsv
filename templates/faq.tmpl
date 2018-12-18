@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+	<title>BlueCSV FAQ</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+	<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+		<a class="navbar-brand" href="{{.ExternalUrl}}/">BlueCSV</a>
+		<ul class="navbar-nav">
+			<li class="nav-item">
+				<a class="nav-link" href="{{.ExternalUrl}}/">Home</a>
+			</li>
+			<li class="nav-item active">
+				<a class="nav-link" href="{{.ExternalUrl}}/faq">FAQ</a>
+			</li>
+			{{if .LoggedIn}}<li class="nav-item">
+					<a class="nav-link" href="{{.ExternalUrl}}/logout">Logout</a>
+			</li>{{else}}{{end}}
+	        </ul>
+	</nav>
+
+	<div class="container">
+		<div style="margin-top: 2em">
+		<h4>What is BlueCSV?</h4>
+		<p>BlueCSV is a web application for grabbing bulk data from an LDAP directory.</p>
+		<h4>What do I put in the Column # fields?</h4>
+		<p>The names of LDAP attributes go in these fields. At UCSC, for instance, departmentNumber would give you the person's department. Another one would be ucscPersonPubAffiliation which says whether the person is Staff, Faculty, Undergraduate or Graduate.</p>
+		<h4>What can I upload?</h4>
+		<p>Please upload only comma separated value files (.csv) when using BlueCSV. These can be made from Microsoft Excel or Numbers spreadsheets. Make sure that the unique identifiers (CruzIDs) are in the first column. Also, please make sure that the header row or first row has at least as many columns as any of the other rows.</p>
+		<h4>Data is showing up for some rows but not others</h4>
+		<p>BlueCSV gets its data straight from the directory. If the ID in column 1 of the row that doesn't return results is not active in the directory, no data will be appended to that row. Likewise, if no data is avaialable for the attribute for that ID in the directory, no data will be appended to the row.</p>
+		<h4>How do I get an access key or report a bug?</h4>
+		<p>Please email the application <a href="mailto:{{.AdminEmail}}">administrator</a>.</p>
+		</div>
+	</div>
+</body>
+
+
