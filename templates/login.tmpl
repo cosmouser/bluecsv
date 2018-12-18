@@ -5,13 +5,13 @@
 </head>
 <body>
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark">
-		<a class="navbar-brand" href="{{.ExternalUrl}}/">BlueCSV</a>
+		<a class="navbar-brand" href="{{.ExternalURL}}/">BlueCSV</a>
 		<ul class="navbar-nav">
 			<li class="nav-item active">
-				<a class="nav-link" href="{{.ExternalUrl}}/">Home</a>
+				<a class="nav-link" href="{{.ExternalURL}}/">Home</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="{{.ExternalUrl}}/faq">FAQ</a>
+				<a class="nav-link" href="{{.ExternalURL}}/faq">FAQ</a>
 			</li>
 	        </ul>
 	</nav>
@@ -19,7 +19,7 @@
 	<div class="container">
 		<div style="margin-top: 2em">
 			<p>Please login with the access key that you were provided with. If you have not been provided an access key, please contact the <a href="mailto:{{.AdminEmail}}">administrator</a>.</p>
-			<form action="{{.ExternalUrl}}/login" method="post">
+			<form action="{{.ExternalURL}}/login" method="post">
 			<div class="form-group">
 			<label for="key">Key:</label>
 			<input type="password" class="form-control" id="key" name="key">
