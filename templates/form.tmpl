@@ -5,16 +5,16 @@
 </head>
 <body>
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark">
-		<a class="navbar-brand" href="{{.ExternalUrl}}/">BlueCSV</a>
+		<a class="navbar-brand" href="{{.ExternalURL}}/">BlueCSV</a>
 		<ul class="navbar-nav">
 			<li class="nav-item active">
-				<a class="nav-link" href="{{.ExternalUrl}}/">Home</a>
+				<a class="nav-link" href="{{.ExternalURL}}/">Home</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="{{.ExternalUrl}}/faq">FAQ</a>
+				<a class="nav-link" href="{{.ExternalURL}}/faq">FAQ</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="{{.ExternalUrl}}/logout">Logout</a>
+				<a class="nav-link" href="{{.ExternalURL}}/logout">Logout</a>
 			</li>
 	        </ul>
 	</nav>
@@ -24,7 +24,7 @@
 		<div class="col-sm-6">
 			<div class="card"><div class="card-body">
 		<p class="lead">Please configure your report</p>
-		<form action="{{.ExternalUrl}}/form" method="post" enctype="multipart/form-data">
+		<form action="{{.ExternalURL}}/form" method="post" enctype="multipart/form-data">
 			<div class="form-group"><label for="col1">Column 1:</label>
 			<input type="text" class="form-control" id="col1" name="col1" value="cn"></div>
 			<div class="form-group"><label for="col2">Column 2:</label>
