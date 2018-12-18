@@ -1,8 +1,8 @@
 {
 	"AdminEmail": "cosmo@ucsc.edu",
-	"ExternalUrl": "",
+	"ExternalURL": "",
 	"PathPrefix": "/",
-	"LdapUrl": "ldapfqdngoeshere:389",
+	"LdapURL": "ldapfqdngoeshere:389",
 	"LdapBase": "ldapsearchbasegoeshere",
 	"LoginKeys": [
 		"pw1:userman",
