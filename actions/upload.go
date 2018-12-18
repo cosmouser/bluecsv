@@ -1,14 +1,15 @@
 package actions
 
 import (
-	"../config"
 	"encoding/csv"
 	"errors"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/cosmouser/bluecsv/config"
+	log "github.com/sirupsen/logrus"
 )
 
 func UploadHandler(w http.ResponseWriter, r *http.Request) {

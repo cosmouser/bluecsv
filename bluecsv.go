@@ -1,10 +1,11 @@
 package main
 
 import (
-	"./actions"
-	"./config"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
+
+	"github.com/cosmouser/bluecsv/actions"
+	"github.com/cosmouser/bluecsv/config"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {

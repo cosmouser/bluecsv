@@ -1,11 +1,12 @@
 package actions
 
 import (
-	"../config"
 	"fmt"
+	"strings"
+
+	"github.com/cosmouser/bluecsv/config"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/ldap.v2"
-	"strings"
 )
 
 func GetLdapValues(uid string, attributes []string) ([]string, error) {

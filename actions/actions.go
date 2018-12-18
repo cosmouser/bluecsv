@@ -1,13 +1,14 @@
 package actions
 
 import (
-	"../config"
 	"errors"
-	"github.com/satori/go.uuid"
-	log "github.com/sirupsen/logrus"
 	"html/template"
 	"net/http"
 	"sync"
+
+	"github.com/cosmouser/bluecsv/config"
+	"github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 type templateInfo struct {
